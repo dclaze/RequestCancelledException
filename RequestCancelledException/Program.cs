@@ -14,7 +14,7 @@ namespace RequestCancelledException
     {
         static void Main(string[] args)
         {
-            const string databaseName = "YourDatabaseHere";
+            const string databaseName = "DatabaseForRequestCancelledExceptionTest";
             const string ravenUrl = "http://localhost:8080";
 
             const string backUpFolder = @"C:\Backups";
@@ -25,7 +25,7 @@ namespace RequestCancelledException
             {
                 BackupPath = filePath,
                 OperateOnTypes = ItemType.Documents | ItemType.Indexes | ItemType.Transformers,
-                BatchSize = 100
+                BatchSize = 4096
             };
             var connectionStringOptions = new RavenConnectionStringOptions()
             {
@@ -42,16 +42,11 @@ namespace RequestCancelledException
             //Test 2 - Number of documents == Batch size x 2. Seems to work.
             RunTest(ravenUrl, databaseName, options, connectionStringOptions, 2);
 
-            //Test 3 - Number of documents == Batch size x 3. Seems to work.
-            RunTest(ravenUrl, databaseName, options, connectionStringOptions, 3);
+            //Test 5 - Number of documents == Batch size x 10. Seems to break here
+            RunTest(ravenUrl, databaseName, options, connectionStringOptions, 10);
 
-            //Test 4 - Number of documents == Batch size x 4. Seems to work.
-            RunTest(ravenUrl, databaseName, options, connectionStringOptions, 4);
-
-            //Test 5 - Number of documents == Batch size x 5. Seems to break here.
-            RunTest(ravenUrl, databaseName, options, connectionStringOptions, 5);
-
-            Console.WriteLine("Exception happens before I can write this!!!");
+            Console.WriteLine("Exception should happen before you can read this!!! If the program executes successfully try adding more documents to the database, by adjusting the multiplier above.");
+            Console.ReadKey();
         }
 
         private static void EnsureDatabaseExists(string ravenUrl, string databaseName)
